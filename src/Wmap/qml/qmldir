@@ -1,0 +1,3 @@
+singleton MyWindowItmeSize 1.0  WindowItmeSize.qml
+singleton MyWindowsColor 1.0  WindowsColor.qml
+singleton MyWindowProperty 1.0  WindowProperty.qml

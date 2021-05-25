@@ -4,12 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core gui svg
+QT       += core gui svg network positioning quick
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = qfi_example
 TEMPLATE = app
+
+DESTDIR = $$PWD/bin-Debug
 
 #-------------------------------------------------
 
@@ -25,6 +27,7 @@ INCLUDEPATH += ./ ./example
 #-------------------------------------------------
 
 HEADERS += \
+    Wmap/wmap.h \
     example/LayoutSquare.h \
     example/MainWindow.h \
     example/WidgetADI.h \
@@ -35,6 +38,9 @@ HEADERS += \
     example/WidgetPFD.h \
     example/WidgetTC.h \
     example/WidgetVSI.h \
+    getjsbsim/GetJsbsim.h \
+    getjsbsim/net_fdm.hxx \
+    getjsbsim/stdint.hxx \
     qfi_ADI.h \
     qfi_HSI.h \
     qfi_NAV.h \
@@ -57,6 +63,7 @@ SOURCES += \
     example/WidgetPFD.cpp \
     example/WidgetTC.cpp \
     example/WidgetVSI.cpp \
+    getjsbsim/GetJsbsim.cpp \
     qfi_ADI.cpp \
     qfi_HSI.cpp \
     qfi_NAV.cpp \
@@ -81,3 +88,11 @@ FORMS += \
 
 RESOURCES += \
     qfi.qrc
+
+
+
+
+win32: LIBS += -L$$PWD/bin-Debug/ -lWmap
+
+INCLUDEPATH += $$PWD/bin-Debug
+DEPENDPATH += $$PWD/bin-Debug

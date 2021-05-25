@@ -52,6 +52,12 @@
 
 #include <QMainWindow>
 #include <QTime>
+#include <QTimer>
+
+#include "./getjsbsim/GetJsbsim.h"
+#include "./Wmap/wmap.h"
+
+static const float pi=3.14159265358;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -74,17 +80,27 @@ public:
 protected:
 
     void timerEvent( QTimerEvent *event );
-    
+    void updateByJsbsim(FGNetFDM1_3 net13);
+
+private slots:
+    void updateUI();
+
+    void on_pushButtonAuto_clicked();
+
 private:
-
     Ui::MainWindow *m_ui;
-
     int m_timerId;
     int m_steps;
-
     float m_realTime;
-
     QTime m_time;
+    FGNetFDM1_3 buff;
+    FGNetFDM1 *net1;
+    FGNetFDM3 *net3;
+    GetJsbsim* m_get_jsbsim;
+    Wmap* m_map;
+    QVariant line_obj;
+    QList<QGeoCoordinate> point_list;
+    QTimer* m_flash_ui;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
