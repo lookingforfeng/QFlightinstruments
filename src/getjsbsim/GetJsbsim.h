@@ -29,7 +29,8 @@ signals:
 	void readUDPPendingDatagrams();
 
 private:
-	QUdpSocket* socketUdp;
+    QUdpSocket* getUdp;
+    QUdpSocket* sendUdp;
 	void htond(double &x);
 	void htonf(float &x);
 

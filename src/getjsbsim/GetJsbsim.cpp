@@ -17,22 +17,26 @@ GetJsbsim::~GetJsbsim()
     delete net3;
     delete net1;
     delete net13;
+    delete getUdp;
+    delete sendUdp;
 }
 
 void GetJsbsim::initUDPSocket()
 {
 
-    socketUdp = new QUdpSocket;
-    socketUdp->bind(QHostAddress::AnyIPv4, 6666, QUdpSocket::ShareAddress);
-    if(socketUdp->joinMulticastGroup(QHostAddress("224.2.2.2")))
+    getUdp = new QUdpSocket;
+    getUdp->bind(QHostAddress::AnyIPv4, 6666, QUdpSocket::ShareAddress);
+    if(getUdp->joinMulticastGroup(QHostAddress("224.2.2.2")))
     {
-        socketUdp->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption,1024*1024*8);
-        connect(socketUdp,SIGNAL(readyRead()),this,SLOT(readUDPPendingDatagrams()));
+        getUdp->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption,1024*1024*8);
+        connect(getUdp,SIGNAL(readyRead()),this,SLOT(readUDPPendingDatagrams()));
         qDebug()<<"rec";
     }
 
-    //QHostAddress *remoteIp = new QHostAddress("127.0.0.1");
-    //socketUdp->connectToHost(*remoteIp, 5550);
+    sendUdp = new QUdpSocket;
+    QHostAddress *remoteIp = new QHostAddress("127.0.0.1");
+    sendUdp->bind(QHostAddress::AnyIPv4, 5555, QUdpSocket::ShareAddress);
+    sendUdp->connectToHost(*remoteIp, 5550);
 }
 
 void GetJsbsim::sendUDP()
@@ -45,11 +49,13 @@ void GetJsbsim::sendUDP()
 
 void GetJsbsim::readUDPPendingDatagrams()
 {
-    while (socketUdp->hasPendingDatagrams())
+    while (getUdp->hasPendingDatagrams())
     {
-        QNetworkDatagram datagram = socketUdp->receiveDatagram();
+        QNetworkDatagram datagram = getUdp->receiveDatagram();
         if  (datagram.data().length()>=(sizeof(FGNetFDM1) + sizeof(FGNetFDM3)))
         {
+            sendUdp->write((char*)(datagram.data().data()),(sizeof(FGNetFDM1) + sizeof(FGNetFDM3)));
+
             memcpy(net13, datagram.data().data(), sizeof(FGNetFDM1) + sizeof(FGNetFDM3));
 
             //进行大小端转换
@@ -132,7 +138,7 @@ void GetJsbsim::readUDPPendingDatagrams()
             }
         }
         emit dataUpdated(*net13);
-        qDebug()<<"send data";
+
     }
 }
 
